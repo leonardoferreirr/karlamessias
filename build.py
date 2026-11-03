@@ -25,7 +25,24 @@ IG_USER = "@princesakarlamessias"
 
 # fotos (assets/img/fotos/foto-NN-1400.webp e -800.webp)
 FOTO_HERO = "foto-19"
-LOGOS_COM_FUNDO = set()    # logos que não deu para recortar sem mutilar a arte
+LOGOS_COM_FUNDO = {"rede-aguias-intercessao"}  # recortar mutilava a arte: vai com o fundo creme original
+# cor de cada card, puxada da própria marca (c1 = centro, c2 = borda, tx = texto). Claros levam texto escuro.
+CORES = {
+    "instituto-ancora": ("#EEF8F1", "#BFE2CB", "#16392A"),        # verde claro (o azul e o verde da logo aparecem)
+    "plancenter": ("#2457B0", "#0A1D45", "#F3EDE2"),              # azul
+    "sisadica": ("#CFA552", "#4E350E", "#FFF7E6"),                # ouro
+    "adica-brasao": ("#F1C24A", "#8E5E0B", "#FFF8E8"),            # amarelo
+    "commadica": ("#93203A", "#2C0610", "#F6F0E6"),               # bordô
+    "conselho-reconstruide": ("#3B3936", "#060606", "#F1E9DA"),   # preto
+    "princesas-virtuosas": ("#FCE6F2", "#E3B5D8", "#4A1846"),     # rosa e lilás
+    "the-dive": ("#1E93BC", "#052B44", "#EAF7FB"),                # azul do mar
+    "visao-de-aguia": ("#22407A", "#060E22", "#F2EBDD"),          # azul-marinho
+    "rede-aguias-intercessao": ("#F7EDD9", "#D8BF92", "#3B2412"), # creme e dourado (a arte vai com o fundo)
+    "deus-sara-as-nacoes": ("#6E2E96", "#1E0A33", "#F6EEFF"),     # roxo
+    "sacerdocio-real": ("#BC2232", "#3D060F", "#FFF1EC"),         # vermelho
+    "devocional-palavra-do-rei": ("#3A2A12", "#0B0805", "#F5E7C6"),
+}
+CLAROS = {"instituto-ancora", "princesas-virtuosas", "rede-aguias-intercessao"}
 
 # eventos e artigos: quando existirem, entram aqui e as áreas se montam sozinhas
 EVENTOS = []   # {"dia":"14","mes":"DEZ","titulo":"","local":"","texto":"","link":""}
@@ -92,12 +109,19 @@ def link(txt, href):
     return f'<a class="link" href="{href}">{e(txt)} {SETA}</a>'
 
 
-def card(logo_nome, nome, papel, texto, href):
+def estilo_cor(logo_nome):
+    c1, c2, tx = CORES.get(logo_nome, ("#4a1520", "#2E0B12", "#F6F0E6"))
+    return f' style="--c1:{c1};--c2:{c2};--tx:{tx}"'
+
+
+def card(logo_nome, nome, papel, texto, href, fora=False):
     fundo = " card__logo--fundo" if logo_nome in LOGOS_COM_FUNDO else ""
-    return (f'<article class="card"><div class="card__logo{fundo}">{logo(logo_nome, nome)}</div>'
+    claro = " card--claro" if logo_nome in CLAROS else ""
+    alvo = ' target="_blank" rel="noopener"' if fora else ""
+    return (f'<article class="card{claro}"{estilo_cor(logo_nome)}><div class="card__logo{fundo}">{logo(logo_nome, nome)}</div>'
             f'<div class="card__txt"><h3>{e(nome)}</h3><span class="card__papel">{e(papel.upper())}</span>'
-            f'<div class="card__mais"><div><p>{e(texto)}</p></div></div></div>'
-            f'<a href="{href}" aria-label="{e(nome)}"></a></article>')
+            f'<div class="card__mais"><div><p>{e(texto)}</p><span class="card__ir">CONHECER {SETA}</span></div></div></div>'
+            f'<a href="{href}"{alvo} aria-label="{e(nome)}"></a></article>')
 
 
 def fila(titulo, cards, clara=False):
@@ -110,7 +134,7 @@ def fila(titulo, cards, clara=False):
 
 def card_plancenter():
     P = C.PLANCENTER
-    return card("plancenter", P["nome"], P["papel"], P["texto"], P["url"]).replace('<a href=', '<a target="_blank" rel="noopener" href=', 1)
+    return card("plancenter", P["nome"], P["papel"], P["texto"], P["url"], fora=True)
 
 
 def bloco_plancenter():
@@ -120,12 +144,36 @@ def bloco_plancenter():
             f'{btn("Conheça a Plancenter", P["url"], "pri", True, " target=_blank rel=noopener")}</div></div>')
 
 
+def fundo_img(nome, alt="", lazy=True, pos="70% 22%", pos_m="50% 15%"):
+    """<picture> de fundo: no desktop a versão larga (preenchimento generativo, -wide), no celular o retrato."""
+    larga = RAIZ / f"assets/img/fotos/{nome}-wide-2400.webp"
+    lz = ' loading="lazy"' if lazy else ' fetchpriority="high"'
+    if larga.exists():
+        desk = (f'<source media="(min-width:901px)" srcset="/assets/img/fotos/{nome}-wide-1400.webp 1400w, '
+                f'/assets/img/fotos/{nome}-wide-2400.webp 2400w" sizes="100vw">')
+    else:
+        print(f"  ! sem versão larga ainda: {nome}-wide (usando o retrato no desktop)")
+        desk = ""
+    return (f'<picture style="--pos:{pos};--pos-m:{pos_m}">{desk}<img src="/assets/img/fotos/{nome}-1400.webp" '
+            f'srcset="/assets/img/fotos/{nome}-800.webp 800w, /assets/img/fotos/{nome}-1400.webp 1024w" sizes="100vw" '
+            f'alt="{e(alt)}" width="1024" height="1536"{lz} decoding="async"></picture>')
+
+
+def cards_instituicoes():
+    """Instituições e empresas: Âncora e Plancenter viram card junto com as ministeriais."""
+    a = next(i for i in C.INSTITUICOES if i["slug"] == "instituto-ancora")
+    out = [card("instituto-ancora", "Instituto Âncora", "Presidência", a["texto"], "/instituto-ancora"), card_plancenter()]
+    out += [card(l, rot, pap, nome, href) for l, rot, nome, pap, href in C.MINISTERIAL]
+    return out
+
+
 def cards_ministerial():
     return [card(l, rot, pap, nome, href) for l, rot, nome, pap, href in C.MINISTERIAL]
 
 
-def cards_movimentos(base="/movimentos"):
-    return [card(l, nome, pap, txt, f"{base}#{i}") for i, l, nome, pap, txt in C.MOVIMENTOS]
+def cards_movimentos(base="/movimentos", sem_conselho=False):
+    return [card(l, nome, pap, txt, f"{base}#{i}") for i, l, nome, pap, txt in C.MOVIMENTOS
+            if not (sem_conselho and l == "conselho-reconstruide")]
 
 
 def lista_bloco(titulo, itens, texto="", escuro=False):
@@ -149,22 +197,25 @@ def chamada(titulo, texto, botao, href):
 
 
 def posts_bloco():
-    if C and POSTS:
+    """Os 3 mais recentes. Sem artigos ainda: as 3 linhas da biblioteca, com o texto dos pilares dela."""
+    if POSTS:
         itens = POSTS[:3]
     else:
         itens = [
-            {"cat": "FÉ E ESPIRITUALIDADE", "titulo": "Estudos bíblicos e devocionais", "foto": "foto-26",
-             "resumo": "Os primeiros conteúdos desta série estão em preparação.", "link": "/conteudos"},
-            {"cat": "RESTAURAÇÃO EMOCIONAL", "titulo": "Reflexões sobre identidade e restauração", "foto": "foto-30",
-             "resumo": "Os primeiros conteúdos desta série estão em preparação.", "link": "/conteudos"},
-            {"cat": "LIDERANÇA E GESTÃO", "titulo": "Liderança, gestão e propósito", "foto": "foto-22",
-             "resumo": "Os primeiros conteúdos desta série estão em preparação.", "link": "/conteudos"},
+            {"titulo": "Fé e espiritualidade", "resumo": C.PILARES[0][1], "img": "biblia", "link": "/conteudos"},
+            {"titulo": "Restauração emocional", "resumo": C.PILARES[1][1], "img": "devocional", "link": "/conteudos"},
+            {"titulo": "Liderança e propósito", "resumo": C.PILARES[3][1], "img": "estudo", "link": "/conteudos"},
         ]
     out = []
     for i, p in enumerate(itens):
-        out.append(f'<article class="post rv" data-d="{i}"><div class="foto">{foto(p["foto"], p["titulo"], "(max-width:900px) 92vw, 30vw")}</div>'
-                   f'<div class="post__txt"><span class="post__cat">{e(p["cat"])}</span><h3>{e(p["titulo"])}</h3>'
-                   f'<p>{e(p["resumo"])}</p>{link("Ler", p["link"])}</div></article>')
+        nome = p.get("img", "biblia")
+        arq = RAIZ / f"assets/img/conteudos/{nome}-1200.webp"
+        if not arq.exists():
+            print(f"  ! imagem de conteúdo faltando: {nome}-1200.webp")
+        img = (f'<img src="/assets/img/conteudos/{nome}-1200.webp" srcset="/assets/img/conteudos/{nome}-700.webp 700w, '
+               f'/assets/img/conteudos/{nome}-1200.webp 1200w" sizes="(max-width:900px) 92vw, 30vw" alt="" width="1200" height="825" loading="lazy" decoding="async">')
+        out.append(f'<article class="post rv" data-d="{i}"><div class="foto">{img}</div>'
+                   f'<div class="post__txt"><h3>{e(p["titulo"])}</h3><p>{e(p["resumo"])}</p>{link("Acessar", p["link"])}</div></article>')
     return '<div class="grade3">' + "".join(out) + "</div>"
 
 
@@ -370,45 +421,46 @@ def landing_topo():
 
 
 def preload_foto(nome):
-    return (f'<link rel="preload" as="image" href="/assets/img/fotos/{nome}-800.webp" media="(max-width:900px)" fetchpriority="high">\n'
-            f'<link rel="preload" as="image" href="/assets/img/fotos/{nome}-1400.webp" media="(min-width:901px)" fetchpriority="high">')
+    """Pré-carrega a foto do topo: a larga no desktop (se já existir) e o retrato no celular."""
+    larga = (RAIZ / f"assets/img/fotos/{nome}-wide-2400.webp").exists()
+    desk = (f'<link rel="preload" as="image" media="(min-width:901px)" imagesrcset="/assets/img/fotos/{nome}-wide-1400.webp 1400w, '
+            f'/assets/img/fotos/{nome}-wide-2400.webp 2400w" imagesizes="100vw" fetchpriority="high">') if larga else \
+           f'<link rel="preload" as="image" href="/assets/img/fotos/{nome}-1400.webp" media="(min-width:901px)" fetchpriority="high">'
+    return (f'<link rel="preload" as="image" media="(max-width:900px)" imagesrcset="/assets/img/fotos/{nome}-800.webp 800w, '
+            f'/assets/img/fotos/{nome}-1400.webp 1024w" imagesizes="100vw" fetchpriority="high">\n' + desk)
 
 
 # ------------------------------------------------------------------ páginas
 def home():
-    faixa_itens = "".join(f"<span>{e(t)}</span><i></i>" for t in ["Fé. Restauração. Liderança."] + C.TITULOS)
-    pilares = "".join(f'<div class="pilar rv" data-d="{i}"><span class="pilar__n">{"I II III IV".split()[i]}</span><h3>{e(t)}</h3><p>{e(d)}</p></div>'
+    faixa_itens = "".join(f"<span>{e(t)}</span><i></i>" for t in C.TITULOS)
+    pilares = "".join(f'<div class="pilar rv" data-d="{i}"><span class="pilar__n">0{i+1}</span><h3>{e(t)}</h3><p>{e(d)}</p></div>'
                       for i, (t, d) in enumerate(C.PILARES))
     atuacao = "".join(f'<div class="lista__item rv" data-foto="/assets/img/fotos/{f}-800.webp"><span class="lista__n">{i+1:02d}</span><h3>{e(t)}</h3><p>{e(d)}</p></div>'
                       for i, (t, d, f) in enumerate(C.ATUACAO_HOME))
     temas = "".join(f"<li>{e(t.rstrip('.'))}</li>" for t in C.TEMAS_HOME)
     corpo = f'''
-<section class="hero" id="inicio"><div class="wrap hero__grid">
-  <div class="hero__txt">
+<section class="capa" id="inicio">
+  <div class="capa__bg" data-paralaxe>{fundo_img(FOTO_HERO, "Karla Messias de blazer marsala e vestido creme", lazy=False, pos="72% 20%", pos_m="50% 12%")}</div>
+  <div class="wrap"><div class="capa__txt">
     <h1>Fé, conhecimento e liderança <em>para transformar vidas.</em></h1>
     <p>Karla Messias une experiência em gestão, educação, desenvolvimento humano e liderança ministerial em uma trajetória dedicada à transformação de pessoas e instituições.</p>
-    <div class="ctas">{btn("Conheça minha história", "/sobre-karla")}{btn("Solicite uma palestra", "/palestras/contratacao", "linha", False)}</div>
-  </div>
-  <figure class="arco">
-    <svg class="arco__linha" viewBox="0 0 100 125" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M1 124V50A49 49 0 0 1 99 50V124Z"/></svg>
-    <div class="arco__foto">{foto(FOTO_HERO, "Karla Messias de blazer marsala e vestido creme", "(max-width:900px) 78vw, 32rem", lazy=False)}</div>
-    <figcaption class="arco__selo"><img src="/assets/img/logos/km-monograma.webp" alt="" width="104" height="104"><span>Karla Messias<small>Fé. Restauração. Liderança.</small></span></figcaption>
-  </figure>
-</div></section>
-<div class="faixa" aria-hidden="true"><div class="faixa__t">{faixa_itens * 2}{faixa_itens * 2}</div></div>
+    <div class="ctas">{btn("Conheça minha história", "/sobre-karla", "ouro")}{btn("Solicite uma palestra", "/palestras/contratacao", "claro", False)}</div>
+  </div></div>
+</section>
+<div class="faixa" aria-hidden="true"><div class="faixa__t">{faixa_itens * 4}</div></div>
 
-<section class="sec sec--branco" id="quem-e"><div class="wrap par">
-  <div class="par__foto moldura rv"><div class="foto foto--alta">{foto("foto-22", "Karla Messias em seu escritório", "(max-width:900px) 92vw, 44vw")}</div></div>
-  <div class="par__txt rv" data-d="1">
+<section class="capa capa--clara" id="quem-e">
+  <div class="capa__bg" data-paralaxe>{fundo_img("foto-21", "Karla Messias em seu escritório, com livros de liderança e gestão", pos="22% 25%", pos_m="40% 15%")}</div>
+  <div class="wrap"><div class="capa__txt rv">
     <h2>Muito além dos títulos. Uma trajetória de propósito.</h2>
     <p>Karla Patrícia Messias Pereira é Administradora, Teóloga, Psicanalista Clínica, Mentora, Palestrante e Apóstola. Sua atuação reúne conhecimento, liderança e compromisso com o desenvolvimento humano, a educação e a transformação espiritual.</p>
-    <figure class="citacao"><blockquote>{e(C.POSICIONAMENTO)}</blockquote><figcaption>{e(C.NOME_COMPLETO.upper())}</figcaption></figure>
-    {link("Conheça minha biografia", "/sobre-karla")}
-  </div>
-</div></section>
+    <figure class="citacao"><blockquote>{e(C.POSICIONAMENTO)}</blockquote></figure>
+    <div class="ctas" style="margin-top:2rem">{link("Conheça minha biografia", "/sobre-karla")}</div>
+  </div></div>
+</section>
 
 <section class="sec sec--escuro" id="pilares"><div class="wrap">
-  <div class="cab rv">{ORN}<h2>Os quatro pilares da marca Karla Messias</h2></div>
+  <div class="cab rv"><h2>Os quatro pilares da marca Karla Messias</h2></div>
   <div class="pilares">{pilares}</div>
 </div></section>
 
@@ -417,49 +469,32 @@ def home():
   <div class="lista" data-lista>{atuacao}</div>
   <div class="lista__olho" aria-hidden="true"><img alt=""></div>
   <div class="fim">{link("Conheça todas as áreas de atuação", "/atuacao-profissional")}</div>
-  <div style="margin-top:clamp(3rem,6vw,4.5rem)">{bloco_plancenter()}</div>
 </div></section>
 
-<section class="sec sec--branco" id="palestras"><div class="wrap par par--inv">
-  <div class="par__foto moldura rv"><div class="foto foto--alta">{foto("foto-17", "Karla Messias apresentando em uma reunião de negócios", "(max-width:900px) 92vw, 44vw")}</div></div>
+<section class="sec sec--branco compacto" id="palestras"><div class="wrap par par--inv">
+  <div class="par__foto moldura rv"><div class="foto">{foto("foto-17", "Karla Messias apresentando em uma reunião de negócios", "(max-width:900px) 92vw, 34vw")}</div></div>
   <div class="par__txt rv" data-d="1">
     <h2>Ideias que despertam. Conhecimento que transforma.</h2>
     <p>Temas para empresas, instituições de ensino, igrejas, congressos e organizações.</p>
-    <ul class="temas" style="margin-top:1.6rem">{temas}</ul>
+    <ul class="temas temas--2" style="margin-top:1.6rem">{temas}</ul>
     <div class="ctas">{btn("Contrate uma palestra", "/palestras/contratacao")}</div>
   </div>
 </div></section>
 
-<section class="banda" id="mentorias">
-  <div class="banda__bg">{foto("foto-25", "", "100vw")}</div>
-  <div class="wrap"><div class="banda__txt rv">
+<section class="fixa" id="mentorias">
+  <div class="fixa__bg">{fundo_img("foto-16", "", pos="72% 22%", pos_m="50% 14%")}</div>
+  <div class="wrap"><div class="fixa__txt rv">
     <h2>Desenvolvimento começa com conhecimento e direção.</h2>
     <p>Apresentação dos programas de mentoria, cursos, seminários e treinamentos, com acesso às respectivas páginas de inscrição.</p>
     <div class="ctas">{btn("Conheça os programas", "/mentorias", "ouro")}</div>
   </div></div>
 </section>
 
-<section class="sec sec--branco" id="instituto-ancora"><div class="wrap">
-  <div class="ancora rv">
-    <div class="ancora__logo">{logo("instituto-ancora", "Instituto Âncora, desde 1991")}</div>
-    <div>
-      <h2>Uma âncora de esperança, conhecimento e transformação para as nações.</h2>
-      <p>Karla Messias é Presidente do Instituto Âncora, organização dedicada a iniciativas educacionais, sociais e de desenvolvimento humano.</p>
-      {btn("Conheça o Instituto Âncora", "/instituto-ancora")}
-    </div>
-  </div>
-</div></section>
-
-<section class="sec sec--escuro" id="ministerial"><div class="wrap">
+<section class="sec catalogo" id="instituicoes"><div class="wrap">
   <div class="cab rv"><h2>Formar líderes. Fortalecer a Igreja. Preparar para as nações.</h2></div>
-  {fila("Liderança e educação ministerial", cards_ministerial())}
-  <div class="fim">{btn("Conheça a atuação ministerial", "/instituicoes", "claro", True)}</div>
-</div></section>
-
-<section class="sec sec--escuro" id="movimentos" style="padding-top:0"><div class="wrap">
-  <div class="cab rv">{ORN}<h2>Uma visão que alcança vidas e nações.</h2></div>
-  {fila("Ministérios, movimentos e iniciativas", cards_movimentos())}
-  <div class="fim">{btn("Conheça os movimentos", "/movimentos", "ouro")}</div>
+  {fila("Instituições e empresas", cards_instituicoes())}
+  {fila("Ministérios, movimentos e iniciativas", cards_movimentos(sem_conselho=True))}
+  <div class="fim ctas" style="justify-content:center">{btn("Conheça a atuação ministerial", "/instituicoes", "ouro")}{btn("Conheça os movimentos", "/movimentos", "claro", False)}</div>
 </div></section>
 
 <section class="sec" id="conteudos"><div class="wrap">
@@ -636,7 +671,7 @@ def movimentos():
     itens = []
     for idx, (i, l, nome, pap, txt) in enumerate(C.MOVIMENTOS):
         fundo = " mov__logo--fundo" if l in LOGOS_COM_FUNDO else ""
-        itens.append(f'<article class="mov rv" id="{i}"><div class="mov__logo{fundo}">{logo(l, nome, idx > 1)}</div>'
+        itens.append(f'<article class="mov rv" id="{i}"><div class="mov__logo{fundo}"{estilo_cor(l)}>{logo(l, nome, idx > 1)}</div>'
                      f'<div><span class="card__papel" style="color:var(--dourado)">{e(pap.upper())}</span><h2 style="margin-top:.4rem">{e(nome)}</h2><p>{e(txt)}</p>'
                      f'{link("Quero participar", zap_link("Olá! Quero saber mais sobre " + nome + "."))}</div></article>')
     corpo = f'''{pag_topo("Uma visão que alcança diferentes dimensões da vida.", "Ministérios, movimentos e iniciativas idealizados e liderados por Karla Messias.", [("Ministérios e Movimentos", None)])}
@@ -704,32 +739,29 @@ def landing():
     areas = "".join(f'<div class="lista__item rv" data-foto="/assets/img/fotos/{f}-800.webp"><span class="lista__n">{i+1:02d}</span><h3>{e(t)}</h3><p>{e(d)}</p></div>'
                     for i, (t, d, f) in enumerate(C.ATUACAO))
     bio = "".join(f"<p>{e(p)}</p>" for p in C.BIO)
-    inst = "".join(f'<div class="bloco rv"><h3>{e(i["nome"])}</h3><p><b>{e(i["papel"])}</b></p><p>{e(i["texto"])}</p></div>' for i in C.INSTITUICOES)
-    cards_inst = [card(i["logo"], i["nome"] if i["slug"] != "casa-da-alianca" else "Casa da Aliança", i["papel"].split(":")[0], i["texto"], "/" + i["slug"]) for i in C.INSTITUICOES] + [card_plancenter()]
+    inst = "".join(f'<div class="bloco bloco--escuro rv"><h3>{e(i["nome"])}</h3><p><b>{e(i["papel"])}</b></p><p>{e(i["texto"])}</p></div>' for i in C.INSTITUICOES)
     espaco = "".join(f"<li>{e(c.rstrip('.'))}</li>" for c in C.CONTEUDO_ESPACO)
     tipos = "".join(f"<li>{e(t.rstrip('.'))}</li>" for t in C.EVENTO_TIPOS)
-    motivos = "".join(f"<li>{e(m.rstrip('.'))}</li>" for m in C.CONTATO_MOTIVOS)
+    faixa_itens = "".join(f"<span>{e(t)}</span><i></i>" for t in C.TITULOS)
     corpo = f'''
-<section class="hero"><div class="wrap hero__grid">
-  <div class="hero__txt">
+<section class="capa">
+  <div class="capa__bg" data-paralaxe>{fundo_img(FOTO_HERO, "Karla Messias de blazer marsala e vestido creme", lazy=False, pos="72% 20%", pos_m="50% 12%")}</div>
+  <div class="wrap"><div class="capa__txt">
     <h1>Fé, restauração e liderança <em>que transformam vidas.</em></h1>
     <p><b>Administradora, Teóloga, Psicanalista Clínica, Mentora, Palestrante e Líder Ministerial.</b></p>
-    <p style="margin-top:1rem">Uma trajetória dedicada ao desenvolvimento humano, à restauração emocional, à formação de líderes e à expansão de projetos que promovem transformação espiritual, pessoal e social.</p>
-    <div class="ctas">{btn("Conheça minha história", "#quem-e")}{btn("Contrate uma palestra", "#palestras", "linha", False)}{btn("Conheça meus projetos", "#projetos", "linha", False)}</div>
-  </div>
-  <figure class="arco">
-    <svg class="arco__linha" viewBox="0 0 100 125" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M1 124V50A49 49 0 0 1 99 50V124Z"/></svg>
-    <div class="arco__foto">{foto("foto-14", "Karla Messias de blazer marsala, com microfone", "(max-width:900px) 78vw, 32rem", lazy=False)}</div>
-    <figcaption class="arco__selo"><img src="/assets/img/logos/km-monograma.webp" alt="" width="104" height="104"><span>KARLA MESSIAS<small>{e(C.LEMA)}</small></span></figcaption>
-  </figure>
-</div></section>
-<div class="faixa" aria-hidden="true"><div class="faixa__t">{("".join(f"<span>{e(t)}</span><i></i>" for t in C.TITULOS)) * 4}</div></div>
+    <p style="margin-top:.9rem">Uma trajetória dedicada ao desenvolvimento humano, à restauração emocional, à formação de líderes e à expansão de projetos que promovem transformação espiritual, pessoal e social.</p>
+    <div class="ctas">{btn("Conheça minha história", "#quem-e", "ouro")}{btn("Contrate uma palestra", "#palestras", "claro", False)}{btn("Conheça meus projetos", "#projetos", "claro", False)}</div>
+  </div></div>
+</section>
+<div class="faixa" aria-hidden="true"><div class="faixa__t">{faixa_itens * 4}</div></div>
 
-<section class="sec sec--branco" id="quem-e"><div class="wrap par">
-  <div class="par__foto moldura rv"><div class="foto foto--alta">{foto("foto-21", "Karla Messias em seu escritório", "(max-width:900px) 92vw, 44vw")}</div></div>
-  <div class="par__txt rv" data-d="1"><h2>Muito além dos títulos, uma história de propósito, conhecimento e serviço.</h2>{bio}
-    {btn("Conheça minha trajetória completa", "/sobre-karla")}</div>
-</div></section>
+<section class="capa capa--clara" id="quem-e">
+  <div class="capa__bg" data-paralaxe>{fundo_img("foto-21", "Karla Messias em seu escritório", pos="22% 25%", pos_m="40% 15%")}</div>
+  <div class="wrap"><div class="capa__txt rv">
+    <h2>Muito além dos títulos, uma história de propósito, conhecimento e serviço.</h2>{bio}
+    <div class="ctas" style="margin-top:2rem">{btn("Conheça minha trajetória completa", "/sobre-karla")}</div>
+  </div></div>
+</section>
 
 <section class="sec" id="areas"><div class="wrap">
   <div class="cab rv"><h2>Conhecimento que transforma. Liderança que inspira.</h2></div>
@@ -737,16 +769,16 @@ def landing():
   <div class="lista__olho" aria-hidden="true"><img alt=""></div>
 </div></section>
 
-<section class="sec sec--branco" id="palestras"><div class="wrap par par--inv">
-  <div class="par__foto moldura rv"><div class="foto foto--alta">{foto("foto-29", "Karla Messias palestrando", "(max-width:900px) 92vw, 44vw")}</div></div>
+<section class="sec sec--branco compacto" id="palestras"><div class="wrap par par--inv">
+  <div class="par__foto moldura rv"><div class="foto">{foto("foto-29", "Karla Messias palestrando", "(max-width:900px) 92vw, 34vw")}</div></div>
   <div class="par__txt rv" data-d="1"><h2>Conhecimento que desperta, inspira e transforma.</h2><p>Temas disponíveis:</p>
-    <ul class="temas" style="margin-top:1rem">{temas}</ul>
+    <ul class="temas temas--2" style="margin-top:1rem">{temas}</ul>
     <div class="ctas">{btn("Solicitar palestra ou conferência", "/palestras/contratacao")}</div></div>
 </div></section>
 
-<section class="banda" id="mentorias">
-  <div class="banda__bg">{foto("foto-16", "", "100vw")}</div>
-  <div class="wrap"><div class="banda__txt rv">
+<section class="fixa" id="mentorias">
+  <div class="fixa__bg">{fundo_img("foto-16", "", pos="72% 22%", pos_m="50% 14%")}</div>
+  <div class="wrap"><div class="fixa__txt rv">
     <h2>Desenvolvendo pessoas para viverem seu potencial.</h2>
     <p>Apresentação de programas de mentoria, cursos, treinamentos e capacitações.</p>
     <ul class="tipos" style="justify-content:flex-start">{"".join(f"<li style='background:transparent;border-color:rgba(246,240,230,.3)'>{e(a.rstrip('.'))}</li>" for a in C.MENTORIA_AREAS)}</ul>
@@ -754,20 +786,21 @@ def landing():
   </div></div>
 </section>
 
-<section class="sec sec--escuro" id="projetos"><div class="wrap">
+<section class="sec catalogo" id="projetos"><div class="wrap">
   <div class="cab rv"><h2>Projetos e instituições que materializam uma visão.</h2></div>
-  {fila("Minhas instituições", cards_inst)}
-  <div class="blocos" style="margin-top:1rem">{inst.replace('class="bloco rv"', 'class="bloco bloco--escuro rv"')}</div>
+  {fila("Instituições e empresas", cards_instituicoes())}
+  <div class="blocos" style="margin-top:1.5rem">{inst}</div>
 </div></section>
 
-<section class="sec sec--escuro" id="movimentos" style="padding-top:0"><div class="wrap">
-  <div class="cab rv">{ORN}<h2>Uma visão que alcança diferentes dimensões da vida.</h2></div>
-  {fila("Ministérios, movimentos e iniciativas", cards_movimentos())}
+<section class="sec catalogo" id="movimentos" style="padding-top:0"><div class="wrap">
+  <div class="cab rv"><h2>Uma visão que alcança diferentes dimensões da vida.</h2></div>
+  {fila("Ministérios, movimentos e iniciativas", cards_movimentos(sem_conselho=True))}
 </div></section>
 
 <section class="sec" id="conteudos"><div class="wrap">
   <div class="cab rv"><h2>Conhecimento para transformar sua jornada.</h2></div>
-  <ul class="tipos rv">{espaco}</ul>
+  {posts_bloco()}
+  <ul class="tipos rv" style="margin-top:2rem">{espaco}</ul>
   <div class="fim">{btn("Acesse os conteúdos", "/conteudos", "linha")}</div>
 </div></section>
 
@@ -785,7 +818,7 @@ def landing():
 </div></div></section>'''
     return pagina("/landingpage", "Karla Messias | Fé, restauração e liderança que transformam vidas",
                   "Karla Messias: Administradora, Teóloga, Psicanalista Clínica, Mentora, Palestrante e Líder Ministerial. Palestras, mentorias, instituições e movimentos.",
-                  corpo, preload_foto("foto-14"), landing=True)
+                  corpo, preload_foto(FOTO_HERO), landing=True)
 
 
 def obrigado():

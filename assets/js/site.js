@@ -84,6 +84,22 @@
     });
   });
 
+  /* ---------- fotos de fundo: rolam mais devagar que a página (paralaxe leve) ---------- */
+  const fundos = [...d.querySelectorAll('[data-paralaxe] img')];
+  if (fundos.length && !rm && w.matchMedia('(min-width:901px)').matches) {
+    let pp = false;
+    const mover = () => {
+      pp = false;
+      fundos.forEach(img => {
+        const r = img.parentElement.parentElement.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > innerHeight) return;
+        img.style.transform = `scale(1.08) translate3d(0,${(r.top * -0.12).toFixed(1)}px,0)`;
+      });
+    };
+    w.addEventListener('scroll', () => { if (!pp) { pp = true; requestAnimationFrame(mover); } }, { passive: true });
+    mover();
+  }
+
   /* ---------- foto do topo: leve profundidade com o mouse ---------- */
   const arco = d.querySelector('.arco__foto img');
   if (arco && !toque && !rm) {
