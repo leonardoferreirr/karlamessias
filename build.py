@@ -246,12 +246,12 @@ def cabecalho(rota):
             itens.append(f'<div class="nav__grupo"><a href="{href}"{atual}>{e(nome)}</a><div class="nav__sub">{s}</div></div>')
         else:
             itens.append(f'<a href="{href}"{atual}>{e(nome)}</a>')
-    itens.append('<a class="btn btn--pri" href="/contato?assunto=parcerias">CONVITES E PARCERIAS</a>')
+    itens.append('<a class="btn btn--pri nav__cta" href="/contato?assunto=parcerias">CONVITES E PARCERIAS</a>')
     return f'''<header class="top"><div class="wrap top__in">
   <a class="marca" href="/" aria-label="Karla Messias, página inicial"><img src="/assets/img/logos/km-monograma.webp" alt="" width="104" height="104"><span>KARLA MESSIAS</span></a>
-  <nav class="nav" id="nav" aria-label="Principal">{"".join(itens)}</nav>
+  <a class="btn btn--pri top__cta" href="/contato?assunto=parcerias">CONVITES E PARCERIAS</a>
   <button class="burger" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav"><span></span><span></span></button>
-</div></header>'''
+</div><nav class="nav" id="nav" aria-label="Principal"><div class="wrap nav__in">{"".join(itens)}</div></nav></header>'''
 
 
 def rodape():
