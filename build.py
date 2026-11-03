@@ -395,7 +395,7 @@ def pagina(rota, titulo, desc, corpo, preload="", landing=False, robots=None):
 <meta property="og:title" content="{e(titulo)}"><meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{url}">
 <meta property="og:image" content="{DOMINIO}/assets/img/og-image.jpg"><meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/img/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
-<link rel="preload" href="/assets/fonts/playfair-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/poppins-500.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/poppins-300.woff2" as="font" type="font/woff2" crossorigin>
 {preload}
 <script>document.documentElement.classList.add('js')</script>
@@ -437,10 +437,10 @@ def home():
                       for i, (t, d) in enumerate(C.PILARES))
     atuacao = "".join(f'<div class="lista__item rv" data-foto="/assets/img/fotos/{f}-800.webp"><span class="lista__n">{i+1:02d}</span><h3>{e(t)}</h3><p>{e(d)}</p></div>'
                       for i, (t, d, f) in enumerate(C.ATUACAO_HOME))
-    temas = "".join(f"<li>{e(t.rstrip('.'))}</li>" for t in C.TEMAS_HOME)
+    temas = "".join(f'<li class="rv" data-d="{i % 3}"><span>{i+1:02d}</span>{e(t.rstrip("."))}</li>' for i, t in enumerate(C.TEMAS_HOME))
     corpo = f'''
 <section class="capa" id="inicio">
-  <div class="capa__bg" data-paralaxe>{fundo_img(FOTO_HERO, "Karla Messias de blazer marsala e vestido creme", lazy=False, pos="72% 20%", pos_m="50% 12%")}</div>
+  <div class="capa__bg" data-paralaxe>{fundo_img(FOTO_HERO, "Karla Messias de blazer marsala e vestido creme", lazy=False, pos="75% 50%", pos_m="50% 12%")}</div>
   <div class="wrap"><div class="capa__txt">
     <h1>Fé, conhecimento e liderança <em>para transformar vidas.</em></h1>
     <p>Karla Messias une experiência em gestão, educação, desenvolvimento humano e liderança ministerial em uma trajetória dedicada à transformação de pessoas e instituições.</p>
@@ -450,7 +450,7 @@ def home():
 <div class="faixa" aria-hidden="true"><div class="faixa__t">{faixa_itens * 4}</div></div>
 
 <section class="capa capa--clara" id="quem-e">
-  <div class="capa__bg" data-paralaxe>{fundo_img("foto-21", "Karla Messias em seu escritório, com livros de liderança e gestão", pos="22% 25%", pos_m="40% 15%")}</div>
+  <div class="capa__bg" data-paralaxe>{fundo_img("foto-21", "Karla Messias em seu escritório, com livros de liderança e gestão", pos="20% 50%", pos_m="40% 15%")}</div>
   <div class="wrap"><div class="capa__txt rv">
     <h2>Muito além dos títulos. Uma trajetória de propósito.</h2>
     <p>Karla Patrícia Messias Pereira é Administradora, Teóloga, Psicanalista Clínica, Mentora, Palestrante e Apóstola. Sua atuação reúne conhecimento, liderança e compromisso com o desenvolvimento humano, a educação e a transformação espiritual.</p>
@@ -467,22 +467,17 @@ def home():
 <section class="sec" id="atuacao"><div class="wrap">
   <div class="cab rv"><h2>Conhecimento aplicado à transformação.</h2></div>
   <div class="lista" data-lista>{atuacao}</div>
-  <div class="lista__olho" aria-hidden="true"><img alt=""></div>
   <div class="fim">{link("Conheça todas as áreas de atuação", "/atuacao-profissional")}</div>
 </div></section>
 
-<section class="sec sec--branco compacto" id="palestras"><div class="wrap par par--inv">
-  <div class="par__foto moldura rv"><div class="foto">{foto("foto-17", "Karla Messias apresentando em uma reunião de negócios", "(max-width:900px) 92vw, 34vw")}</div></div>
-  <div class="par__txt rv" data-d="1">
-    <h2>Ideias que despertam. Conhecimento que transforma.</h2>
-    <p>Temas para empresas, instituições de ensino, igrejas, congressos e organizações.</p>
-    <ul class="temas temas--2" style="margin-top:1.6rem">{temas}</ul>
-    <div class="ctas">{btn("Contrate uma palestra", "/palestras/contratacao")}</div>
-  </div>
+<section class="sec sec--branco compacto" id="palestras"><div class="wrap">
+  <div class="cab rv"><h2>Ideias que despertam. Conhecimento que transforma.</h2><p>Temas para empresas, instituições de ensino, igrejas, congressos e organizações.</p></div>
+  <ol class="temas-grade">{temas}</ol>
+  <div class="fim">{btn("Contrate uma palestra", "/palestras/contratacao")}</div>
 </div></section>
 
 <section class="fixa" id="mentorias">
-  <div class="fixa__bg">{fundo_img("foto-16", "", pos="72% 22%", pos_m="50% 14%")}</div>
+  <div class="fixa__bg">{fundo_img("foto-16", "", pos="82% 50%", pos_m="50% 14%")}</div>
   <div class="wrap"><div class="fixa__txt rv">
     <h2>Desenvolvimento começa com conhecimento e direção.</h2>
     <p>Apresentação dos programas de mentoria, cursos, seminários e treinamentos, com acesso às respectivas páginas de inscrição.</p>
@@ -672,7 +667,7 @@ def movimentos():
     for idx, (i, l, nome, pap, txt) in enumerate(C.MOVIMENTOS):
         fundo = " mov__logo--fundo" if l in LOGOS_COM_FUNDO else ""
         itens.append(f'<article class="mov rv" id="{i}"><div class="mov__logo{fundo}"{estilo_cor(l)}>{logo(l, nome, idx > 1)}</div>'
-                     f'<div><span class="card__papel" style="color:var(--dourado)">{e(pap.upper())}</span><h2 style="margin-top:.4rem">{e(nome)}</h2><p>{e(txt)}</p>'
+                     f'<div><h2>{e(nome)}</h2><span class="card__papel" style="display:block;margin-top:.5rem;color:var(--dourado);opacity:1">{e(pap.upper())}</span><p>{e(txt)}</p>'
                      f'{link("Quero participar", zap_link("Olá! Quero saber mais sobre " + nome + "."))}</div></article>')
     corpo = f'''{pag_topo("Uma visão que alcança diferentes dimensões da vida.", "Ministérios, movimentos e iniciativas idealizados e liderados por Karla Messias.", [("Ministérios e Movimentos", None)])}
 <section class="sec sec--escuro"><div class="wrap">{fila("Ministérios, movimentos e iniciativas", cards_movimentos(""))}</div></section>
@@ -735,7 +730,7 @@ def privacidade():
 
 
 def landing():
-    temas = "".join(f"<li>{e(t.rstrip('.'))}</li>" for t in C.TEMAS)
+    temas = "".join(f'<li class="rv" data-d="{i % 4}"><span>{i+1:02d}</span>{e(t.rstrip("."))}</li>' for i, t in enumerate(C.TEMAS))
     areas = "".join(f'<div class="lista__item rv" data-foto="/assets/img/fotos/{f}-800.webp"><span class="lista__n">{i+1:02d}</span><h3>{e(t)}</h3><p>{e(d)}</p></div>'
                     for i, (t, d, f) in enumerate(C.ATUACAO))
     bio = "".join(f"<p>{e(p)}</p>" for p in C.BIO)
@@ -745,7 +740,7 @@ def landing():
     faixa_itens = "".join(f"<span>{e(t)}</span><i></i>" for t in C.TITULOS)
     corpo = f'''
 <section class="capa">
-  <div class="capa__bg" data-paralaxe>{fundo_img(FOTO_HERO, "Karla Messias de blazer marsala e vestido creme", lazy=False, pos="72% 20%", pos_m="50% 12%")}</div>
+  <div class="capa__bg" data-paralaxe>{fundo_img(FOTO_HERO, "Karla Messias de blazer marsala e vestido creme", lazy=False, pos="75% 50%", pos_m="50% 12%")}</div>
   <div class="wrap"><div class="capa__txt">
     <h1>Fé, restauração e liderança <em>que transformam vidas.</em></h1>
     <p><b>Administradora, Teóloga, Psicanalista Clínica, Mentora, Palestrante e Líder Ministerial.</b></p>
@@ -756,7 +751,7 @@ def landing():
 <div class="faixa" aria-hidden="true"><div class="faixa__t">{faixa_itens * 4}</div></div>
 
 <section class="capa capa--clara" id="quem-e">
-  <div class="capa__bg" data-paralaxe>{fundo_img("foto-21", "Karla Messias em seu escritório", pos="22% 25%", pos_m="40% 15%")}</div>
+  <div class="capa__bg" data-paralaxe>{fundo_img("foto-21", "Karla Messias em seu escritório", pos="20% 50%", pos_m="40% 15%")}</div>
   <div class="wrap"><div class="capa__txt rv">
     <h2>Muito além dos títulos, uma história de propósito, conhecimento e serviço.</h2>{bio}
     <div class="ctas" style="margin-top:2rem">{btn("Conheça minha trajetória completa", "/sobre-karla")}</div>
@@ -766,18 +761,16 @@ def landing():
 <section class="sec" id="areas"><div class="wrap">
   <div class="cab rv"><h2>Conhecimento que transforma. Liderança que inspira.</h2></div>
   <div class="lista" data-lista>{areas}</div>
-  <div class="lista__olho" aria-hidden="true"><img alt=""></div>
 </div></section>
 
-<section class="sec sec--branco compacto" id="palestras"><div class="wrap par par--inv">
-  <div class="par__foto moldura rv"><div class="foto">{foto("foto-29", "Karla Messias palestrando", "(max-width:900px) 92vw, 34vw")}</div></div>
-  <div class="par__txt rv" data-d="1"><h2>Conhecimento que desperta, inspira e transforma.</h2><p>Temas disponíveis:</p>
-    <ul class="temas temas--2" style="margin-top:1rem">{temas}</ul>
-    <div class="ctas">{btn("Solicitar palestra ou conferência", "/palestras/contratacao")}</div></div>
+<section class="sec sec--branco compacto" id="palestras"><div class="wrap">
+  <div class="cab rv"><h2>Conhecimento que desperta, inspira e transforma.</h2><p>Temas disponíveis:</p></div>
+  <ol class="temas-grade temas-grade--4">{temas}</ol>
+  <div class="fim">{btn("Solicitar palestra ou conferência", "/palestras/contratacao")}</div>
 </div></section>
 
 <section class="fixa" id="mentorias">
-  <div class="fixa__bg">{fundo_img("foto-16", "", pos="72% 22%", pos_m="50% 14%")}</div>
+  <div class="fixa__bg">{fundo_img("foto-16", "", pos="82% 50%", pos_m="50% 14%")}</div>
   <div class="wrap"><div class="fixa__txt rv">
     <h2>Desenvolvendo pessoas para viverem seu potencial.</h2>
     <p>Apresentação de programas de mentoria, cursos, treinamentos e capacitações.</p>
