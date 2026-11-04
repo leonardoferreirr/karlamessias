@@ -176,6 +176,29 @@ def cards_movimentos(base="/movimentos", sem_conselho=False):
             if not (sem_conselho and l == "conselho-reconstruide")]
 
 
+def tags(itens, cols=4, escuro=False, extra=""):
+    """Etiquetas em grade de largura igual: `cols` por linha, a última centralizada."""
+    li = "".join(f"<li>{e(x.rstrip('.'))}</li>" for x in itens)
+    return f'<ul class="tags{" tags--escuro" if escuro else ""}{extra}" style="--cols:{cols}">{li}</ul>'
+
+
+# instituições na pilha da landing: cor da marca (Casa da Aliança no marsala da casa)
+CORES_INST = {"adica-casa-da-alianca": ("#6A1A2C", "#240710", "#F6F0E6")}
+
+
+def pilha_instituicoes():
+    """Cards largos que sobem e empilham na rolagem."""
+    out = []
+    for n, i in enumerate(C.INSTITUICOES):
+        c1, c2, tx = CORES_INST.get(i["logo"]) or CORES.get(i["logo"], ("#4a1520", "#2E0B12", "#F6F0E6"))
+        claro = " pcard--claro" if i["logo"] in CLAROS else ""
+        out.append(f'<article class="pcard{claro}" style="--c1:{c1};--c2:{c2};--tx:{tx};--i:{n}">'
+                   f'<div class="pcard__marca">{logo(i["logo"], i["nome"])}</div>'
+                   f'<div class="pcard__cab"><h3>{e(i["nome"])}</h3><p class="pcard__papel">{e(i["papel"])}</p></div>'
+                   f'<div class="pcard__txt"><p>{e(i["texto"])}</p>{link("Conheça", "/" + i["slug"])}</div></article>')
+    return f'<div class="pilha">{"".join(out)}</div>'
+
+
 def lista_bloco(titulo, itens, texto="", escuro=False):
     li = "".join(f"<li>{e(x.rstrip('.'))}</li>" for x in itens)
     p = f"<p>{e(texto)}</p>" if texto else ""
@@ -734,9 +757,6 @@ def landing():
     areas = "".join(f'<div class="lista__item rv" data-foto="/assets/img/fotos/{f}-800.webp"><span class="lista__n">{i+1:02d}</span><h3>{e(t)}</h3><p>{e(d)}</p></div>'
                     for i, (t, d, f) in enumerate(C.ATUACAO))
     bio = "".join(f"<p>{e(p)}</p>" for p in C.BIO)
-    inst = "".join(f'<div class="bloco bloco--escuro rv"><h3>{e(i["nome"])}</h3><p><b>{e(i["papel"])}</b></p><p>{e(i["texto"])}</p></div>' for i in C.INSTITUICOES)
-    espaco = "".join(f"<li>{e(c.rstrip('.'))}</li>" for c in C.CONTEUDO_ESPACO)
-    tipos = "".join(f"<li>{e(t.rstrip('.'))}</li>" for t in C.EVENTO_TIPOS)
     faixa_itens = "".join(f"<span>{e(t)}</span><i></i>" for t in C.TITULOS)
     corpo = f'''
 <section class="capa">
@@ -750,11 +770,11 @@ def landing():
 </section>
 <div class="faixa" aria-hidden="true"><div class="faixa__t">{faixa_itens * 4}</div></div>
 
-<section class="capa capa--clara" id="quem-e">
+<section class="capa capa--clara capa--bio" id="quem-e">
   <div class="capa__bg" data-paralaxe>{fundo_img("foto-21", "Karla Messias em seu escritório", pos="20% 50%", pos_m="40% 15%")}</div>
   <div class="wrap"><div class="capa__txt rv">
     <h2>Muito além dos títulos, uma história de propósito, conhecimento e serviço.</h2>{bio}
-    <div class="ctas" style="margin-top:2rem">{btn("Conheça minha trajetória completa", "/sobre-karla")}</div>
+    <div class="ctas">{btn("Conheça minha trajetória completa", "/sobre-karla")}</div>
   </div></div>
 </section>
 
@@ -774,7 +794,7 @@ def landing():
   <div class="wrap"><div class="fixa__txt rv">
     <h2>Desenvolvendo pessoas para viverem seu potencial.</h2>
     <p>Apresentação de programas de mentoria, cursos, treinamentos e capacitações.</p>
-    <ul class="tipos" style="justify-content:flex-start">{"".join(f"<li style='background:transparent;border-color:rgba(246,240,230,.3)'>{e(a.rstrip('.'))}</li>" for a in C.MENTORIA_AREAS)}</ul>
+    {tags(C.MENTORIA_AREAS, 2, True, " tags--esq")}
     <div class="ctas">{btn("Conheça as formações disponíveis", "/mentorias", "ouro")}</div>
   </div></div>
 </section>
@@ -782,7 +802,7 @@ def landing():
 <section class="sec catalogo" id="projetos"><div class="wrap">
   <div class="cab rv"><h2>Projetos e instituições que materializam uma visão.</h2></div>
   {fila("Instituições e empresas", cards_instituicoes())}
-  <div class="blocos" style="margin-top:1.5rem">{inst}</div>
+  {pilha_instituicoes()}
 </div></section>
 
 <section class="sec catalogo" id="movimentos" style="padding-top:0"><div class="wrap">
@@ -793,20 +813,20 @@ def landing():
 <section class="sec" id="conteudos"><div class="wrap">
   <div class="cab rv"><h2>Conhecimento para transformar sua jornada.</h2></div>
   {posts_bloco()}
-  <ul class="tipos rv" style="margin-top:2rem">{espaco}</ul>
+  {tags(C.CONTEUDO_ESPACO, 4, extra=" rv")}
   <div class="fim">{btn("Acesse os conteúdos", "/conteudos", "linha")}</div>
 </div></section>
 
 <section class="sec sec--creme2" id="agenda"><div class="wrap">
   <div class="cab rv"><h2>Encontros que geram conhecimento e transformação.</h2><p>Cada evento terá página própria, programação, local, informações de inscrição e contato.</p></div>
-  <ul class="tipos rv">{tipos}</ul>
+  {tags(C.EVENTO_TIPOS, 4, extra=" rv")}
   <div class="fim">{btn("Ver agenda", "/agenda", "linha")}</div>
 </div></section>
 
 <section class="sec" id="contato"><div class="wrap"><div class="chamada rv">
   <h2>Vamos construir algo que gere transformação?</h2>
   <p>Para palestras, conferências, mentorias, parcerias institucionais e convites ministeriais:</p>
-  <ul class="tipos" style="margin-bottom:.4rem">{"".join(f"<li style='background:transparent;color:var(--creme);border-color:rgba(246,240,230,.3)'>{e(m.rstrip('.'))}</li>" for m in C.CONTATO_MOTIVOS)}</ul>
+  {tags(C.CONTATO_MOTIVOS, 3, True)}
   <div class="ctas">{btn("Fale com a equipe Karla Messias", "/obrigado?c=landing", "ouro")}</div>
 </div></div></section>'''
     return pagina("/landingpage", "Karla Messias | Fé, restauração e liderança que transformam vidas",
