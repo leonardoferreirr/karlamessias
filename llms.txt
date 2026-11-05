@@ -3,20 +3,20 @@
 > Karla Patrícia Messias Pereira, conhecida como Karla Messias: Administradora, Teóloga, Psicanalista Clínica, Mentora, Palestrante e Apóstola. Uma mulher de fé, conhecimento e liderança, dedicada à restauração de vidas, ao desenvolvimento humano, à formação de líderes e à transformação de pessoas e instituições.
 
 ## Páginas
-- [Início](https://karlamessias.vercel.app/): apresentação, pilares, atuação, palestras, mentorias, instituições, movimentos, conteúdos, agenda e contato.
-- [Sobre Karla](https://karlamessias.vercel.app/sobre-karla): biografia oficial e liderança institucional.
-- [Atuação profissional](https://karlamessias.vercel.app/atuacao-profissional)
-- [Palestras](https://karlamessias.vercel.app/palestras) e [contratação](https://karlamessias.vercel.app/palestras/contratacao)
-- [Mentorias e formações](https://karlamessias.vercel.app/mentorias)
-- [Instituições](https://karlamessias.vercel.app/instituicoes): Instituto Âncora, SISADICA e Casa da Aliança.
-- [Ministérios e movimentos](https://karlamessias.vercel.app/movimentos)
-- [Contato](https://karlamessias.vercel.app/contato)
+- [Início](https://www.karlamessias.com/): apresentação, pilares, atuação, palestras, mentorias, instituições, movimentos, conteúdos, agenda e contato.
+- [Sobre Karla](https://www.karlamessias.com/sobre-karla): biografia oficial e liderança institucional.
+- [Atuação profissional](https://www.karlamessias.com/atuacao-profissional)
+- [Palestras](https://www.karlamessias.com/palestras) e [contratação](https://www.karlamessias.com/palestras/contratacao)
+- [Mentorias e formações](https://www.karlamessias.com/mentorias)
+- [Instituições](https://www.karlamessias.com/instituicoes): Instituto Âncora, SISADICA e Casa da Aliança.
+- [Ministérios e movimentos](https://www.karlamessias.com/movimentos)
+- [Contato](https://www.karlamessias.com/contato)
 
 ## Instituições
 - Instituto Âncora: Presidência: Karla Messias. Instituição dedicada ao desenvolvimento educacional, humano e social, por meio de projetos, capacitações, programas de formação e iniciativas de transformação comunitária.
 - SISADICA: Presidência do Conselho Mundial: Karla Messias. Sistema dedicado à formação teológica, capacitação ministerial, educação cristã e desenvolvimento missionário.
 - Assembleia de Deus Internacional Casa da Aliança: Pastora Presidente: Apóstola Karla Messias. Ministério cristão dedicado à Palavra de Deus, ao discipulado, à intercessão, à formação de líderes e às missões.
-- Plancenter (Consultoria & Projetos): A Plancenter oferece soluções em planejamento, projetos, gestão, consultoria, branding, mentoria e capacitação. https://plancenter.vercel.app
+- Plancenter (Consultoria & Projetos): A Plancenter oferece soluções em planejamento, projetos, gestão, consultoria, branding, mentoria e capacitação. https://www.plancenter.com.br
 
 ## Ministérios, movimentos e iniciativas
 - Princesas Virtuosas: Ministério de mulheres cristãs voltado à fé, restauração, capacitação e fortalecimento feminino.

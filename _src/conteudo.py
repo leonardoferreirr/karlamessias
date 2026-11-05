@@ -164,5 +164,5 @@ PLANCENTER = {
     "nome": "Plancenter", "papel": "Consultoria & Projetos",
     "texto": "A Plancenter oferece soluções em planejamento, projetos, gestão, consultoria, branding, mentoria e capacitação.",
     "frase": "Onde suas ideias se transformam em projetos bem-sucedidos.",
-    "url": "https://plancenter.vercel.app",
+    "url": "https://www.plancenter.com.br",
 }

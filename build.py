@@ -17,7 +17,7 @@ RAIZ = Path(__file__).parent
 sys.path.insert(0, str(RAIZ / "_src"))
 import conteudo as C  # noqa: E402
 
-DOMINIO = "https://karlamessias.vercel.app"
+DOMINIO = "https://www.karlamessias.com"
 INDEXAR = False            # True depois da aprovação dela
 WHATSAPP = "5561993973723"  # +55 61 99397-3723, o mesmo dos slides da Plancenter
 INSTAGRAM = "https://www.instagram.com/princesakarlamessias/"
@@ -747,7 +747,7 @@ def privacidade():
 <h2>Como a mensagem chega até nós</h2><p>Ao enviar um formulário, a sua mensagem é aberta no WhatsApp, já preenchida, para que você a envie à equipe Karla Messias. O WhatsApp tem a sua própria política de privacidade.</p>
 <h2>Cookies</h2><p>Este site não usa cookies de publicidade nem de rastreamento. Se ferramentas de medição forem adicionadas no futuro, como o Google Analytics, você será avisado e poderá escolher se aceita.</p>
 <h2>Seus direitos</h2><p>Você pode pedir a qualquer momento acesso, correção ou exclusão dos seus dados, e retirar o seu consentimento. Basta escrever para a equipe pelo WhatsApp ou pelo Instagram {IG_USER}.</p>
-<h2>Atualização</h2><p>Esta política foi publicada em {date.today().strftime("%d/%m/%Y")} e pode ser atualizada. A versão em vigor é sempre a desta página.</p>
+<h2>Atualização</h2><p>Esta política foi publicada em 04/11/2026 e pode ser atualizada. A versão em vigor é sempre a desta página.</p>
 </div></div></section>'''
     return pagina("/privacidade", "Política de Privacidade | Karla Messias", "Política de privacidade e tratamento de dados (LGPD) do site Karla Messias.", corpo)
 

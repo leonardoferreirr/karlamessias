@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: /
 
-Sitemap: https://karlamessias.vercel.app/sitemap.xml
+Sitemap: https://www.karlamessias.com/sitemap.xml
