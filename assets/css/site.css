@@ -600,3 +600,9 @@ strong,b{font-weight:500}
   .pcard__papel{font-size:.84rem;margin-top:.4rem}
   .pcard__txt p{font-size:.95rem}
 }
+
+/* celular: botões empilhados sempre na mesma largura (a do mais largo) */
+@media (max-width:600px){
+  .ctas{display:grid;grid-template-columns:minmax(0,max-content);width:fit-content;max-width:100%;margin-inline:auto;}
+  .ctas>*{width:100%;justify-content:center;text-align:center}
+}
