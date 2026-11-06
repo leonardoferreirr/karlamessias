@@ -16,12 +16,14 @@ from pathlib import Path
 RAIZ = Path(__file__).parent
 sys.path.insert(0, str(RAIZ / "_src"))
 import conteudo as C  # noqa: E402
+import curriculo as K  # noqa: E402
 
 DOMINIO = "https://www.karlamessias.com"
 INDEXAR = False            # True depois da aprovação dela
 WHATSAPP = "5561993973723"  # +55 61 99397-3723, o mesmo dos slides da Plancenter
 INSTAGRAM = "https://www.instagram.com/princesakarlamessias/"
 IG_USER = "@princesakarlamessias"
+CV_PDF = "/assets/docs/curriculo-karla-messias.pdf"  # gerado por tools/curriculo_pdf.py
 
 # fotos (assets/img/fotos/foto-NN-1400.webp e -800.webp)
 FOTO_HERO = "foto-19"
@@ -107,6 +109,10 @@ def btn(txt, href, tipo="pri", seta=True, extra=""):
 
 def link(txt, href):
     return f'<a class="link" href="{href}">{e(txt)} {SETA}</a>'
+
+
+def btn_pdf(tipo="linha"):
+    return btn("Baixar em PDF", CV_PDF, tipo, False, ' download="Curriculo-Karla-Messias.pdf"')
 
 
 def estilo_cor(logo_nome):
@@ -301,7 +307,7 @@ def contatos_diretos():
 # ------------------------------------------------------------------ casca
 MENU = [
     ("Início", "/", []),
-    ("Sobre Karla", "/sobre-karla", []),
+    ("Sobre Karla", "/sobre-karla", [("Biografia oficial", "/sobre-karla"), ("Currículo profissional", "/curriculo")]),
     ("Atuação Profissional", "/atuacao-profissional", []),
     ("Palestras e Mentorias", "/palestras", [("Palestras e conferências", "/palestras"), ("Contratar uma palestra", "/palestras/contratacao"), ("Mentorias", "/mentorias")]),
     ("Instituições", "/instituicoes", [("Instituto Âncora", "/instituto-ancora"), ("SISADICA", "/sisadica"), ("Casa da Aliança", "/casa-da-alianca")]),
@@ -347,7 +353,7 @@ def rodape():
 <a class="zap" href="{zap_link("Olá! Vim pelo site da Karla Messias.")}" target="_blank" rel="noopener" aria-label="Falar pelo WhatsApp">{ZAP}</a>'''
 
 
-NOMES_ROTA = {"/sobre-karla": "Sobre Karla", "/atuacao-profissional": "Atuação profissional", "/palestras": "Palestras",
+NOMES_ROTA = {"/sobre-karla": "Sobre Karla", "/curriculo": "Currículo profissional", "/atuacao-profissional": "Atuação profissional", "/palestras": "Palestras",
               "/palestras/contratacao": "Contratar palestra", "/mentorias": "Mentorias", "/instituicoes": "Instituições",
               "/instituto-ancora": "Instituto Âncora", "/sisadica": "SISADICA", "/casa-da-alianca": "Casa da Aliança",
               "/movimentos": "Ministérios e movimentos", "/conteudos": "Conteúdos", "/agenda": "Agenda", "/contato": "Contato",
@@ -361,6 +367,8 @@ def schema_pagina(rota):
         itens = [{"@type": "ListItem", "position": 1, "name": "Início", "item": DOMINIO + "/"}]
         if rota == "/palestras/contratacao":
             itens.append({"@type": "ListItem", "position": 2, "name": "Palestras", "item": DOMINIO + "/palestras"})
+        if rota == "/curriculo":
+            itens.append({"@type": "ListItem", "position": 2, "name": "Sobre Karla", "item": DOMINIO + "/sobre-karla"})
         itens.append({"@type": "ListItem", "position": len(itens) + 1, "name": NOMES_ROTA[rota], "item": DOMINIO + rota})
         out.append({"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": itens})
     for i in C.INSTITUICOES:
@@ -545,6 +553,7 @@ def sobre():
     galeria = "".join(f'<div class="foto rv">{foto(f, "Karla Messias", "(max-width:900px) 46vw, 23vw")}</div>'
                       for f in ["foto-14", "foto-33", "foto-20", "foto-16", "foto-29", "foto-24", "foto-31", "foto-28"])
     enc = "".join(f"<p>{e(p)}</p>" for p in C.ENCERRAMENTO)
+    destaques = "".join(f"<li><b>{e(n)}</b><span>{e(p)}</span></li>" for n, p in K.DESTAQUES)
     corpo = f'''{pag_topo("Muito além dos títulos, uma história de propósito, conhecimento e serviço.", "", [("Sobre Karla", None)])}
 <section class="sec sec--branco" id="biografia"><div class="wrap par">
   <div class="par__foto moldura rv"><div class="foto foto--alta">{foto("foto-30", "Retrato de Karla Messias", "(max-width:900px) 92vw, 44vw", lazy=False)}</div></div>
@@ -558,6 +567,11 @@ def sobre():
   <div class="cab rv"><h2>Liderança institucional</h2></div>
   <ul class="papeis rv" style="max-width:56rem;margin-inline:auto">{papeis}</ul>
   <div class="fim">{btn("Conheça as instituições", "/instituicoes", "linha")}</div>
+</div></section>
+<section class="sec sec--escuro" id="curriculo"><div class="wrap par">
+  <div class="par__txt rv"><h2>Currículo profissional</h2><p>{e(K.PERFIL[0])}</p>
+    <div class="ctas">{btn("Ver currículo completo", "/curriculo", "ouro")}{btn_pdf("claro")}</div></div>
+  <ul class="papeis rv" data-d="1">{destaques}</ul>
 </div></section>
 <section class="sec sec--branco" id="galeria"><div class="wrap">
   <div class="cab rv"><h2>Galeria de registros</h2></div>
@@ -578,7 +592,7 @@ def atuacao():
         sec = " sec--branco" if i % 2 == 0 else ""
         blocos.append(f'''<section class="sec{sec}"><div class="wrap par{inv}">
   <div class="par__foto moldura rv"><div class="foto foto--larga">{foto(f, t, "(max-width:900px) 92vw, 44vw", lazy=i > 0)}</div></div>
-  <div class="par__txt rv" data-d="1"><span class="lista__n">{i+1:02d}</span><h2 style="margin-top:.6rem">{e(t)}</h2><p>{e(d)}</p></div>
+  <div class="par__txt rv" data-d="1"><span class="lista__n">{i+1:02d}</span><h2 style="margin-top:.6rem">{e(t)}</h2><p>{e(d)}</p>{link("Ver currículo profissional", "/curriculo") if i == 0 else ""}</div>
 </div></section>''')
     blocos.append(f'<section class="sec sec--branco"><div class="wrap">{bloco_plancenter()}</div></section>')
     corpo = (pag_topo("Conhecimento que transforma. Liderança que inspira.", "", [("Atuação Profissional", None)]) + "".join(blocos) +
@@ -586,6 +600,52 @@ def atuacao():
     return pagina("/atuacao-profissional", "Atuação profissional | Karla Messias",
                   "Administração e gestão, teologia e formação ministerial, psicanálise clínica e desenvolvimento humano, mentoria e liderança, palestras e conferências.",
                   corpo)
+
+
+def curriculo():
+    perfil = "".join(f"<p>{e(p)}</p>" for p in K.PERFIL)
+    lista = lambda itens: '<ul class="cv__lista">' + "".join(f"<li>{e(x.rstrip('.'))}</li>" for x in itens) + "</ul>"
+    experiencia = "".join(
+        f'<article class="cv__item rv"><p class="cv__data">{e(d["periodo"])}</p><div><h3>{e(d["org"])}</h3>'
+        f'<p class="cv__papel">{e(d["papel"])}</p>{lista(d["itens"])}</div></article>' for d in K.EXPERIENCIA)
+    complementares = "".join(f'<li><b>{e(d["org"])}</b><span>{e(d["papel"])}</span></li>' for d in K.COMPLEMENTARES)
+    PL, CO, TS = K.PLANCENTER, K.CONSULTORIA, K.TERCEIRO_SETOR
+    corpo = f'''{pag_topo("Currículo profissional", K.TITULOS, [("Sobre Karla", "/sobre-karla"), ("Currículo profissional", None)], f'<div class="ctas">{btn_pdf("pri")}</div>')}
+<section class="sec sec--branco" id="perfil"><div class="wrap par">
+  <div class="par__foto moldura rv"><div class="foto foto--alta">{foto("foto-22", "Karla Messias em seu escritório", "(max-width:900px) 92vw, 44vw", lazy=False)}</div></div>
+  <div class="par__txt rv" data-d="1"><h2>Perfil profissional</h2>{perfil}</div>
+</div></section>
+<section class="sec sec--escuro" id="competencias"><div class="wrap">
+  <div class="cab rv">{ORN}<h2>Principais competências</h2></div>
+  {tags(K.COMPETENCIAS, 4, True, " rv")}
+</div></section>
+<section class="sec" id="experiencia"><div class="wrap">
+  <div class="cab rv"><h2>Experiência profissional</h2></div>
+  <div class="cv">{experiencia}</div>
+</div></section>
+<section class="sec sec--branco" id="empreendedorismo"><div class="wrap">
+  <div class="ancora ancora--plan rv"><div class="ancora__logo plan__logo">{logo("plancenter", "Plancenter, Consultoria & Projetos")}</div>
+    <div><h2>Empreendedorismo e liderança empresarial</h2><p>{e(PL["org"])}: {e(PL["papel"])}</p>{lista(PL["itens"])}
+    {btn("Conheça a Plancenter", C.PLANCENTER["url"], "pri", True, " target=_blank rel=noopener")}</div></div>
+</div></section>
+<section class="sec" id="consultoria"><div class="wrap">
+  <div class="cab rv"><h2>Consultoria e atuação institucional</h2><p>{e(CO["texto"])}</p></div>
+  <div class="blocos">{lista_bloco(CO["org"], CO["itens"], CO["papel"])}{lista_bloco(TS["org"], TS["itens"], TS["papel"], True)}</div>
+</div></section>
+<section class="sec sec--branco" id="complementares"><div class="wrap">
+  <div class="cab rv"><h2>Experiências profissionais complementares</h2></div>
+  <ul class="papeis rv" style="max-width:56rem;margin-inline:auto">{complementares}</ul>
+</div></section>
+<section class="sec" id="formacao"><div class="wrap">
+  <div class="cab rv"><h2>Formação acadêmica e profissional</h2></div>
+  {tags(K.FORMACAO, 3, False, " rv")}
+  <div class="blocos cv__blocos">{lista_bloco("Conhecimentos técnicos e sistemas", K.SISTEMAS)}{lista_bloco("Capacitações e aperfeiçoamento profissional", K.CAPACITACOES_SITE, "", True)}</div>
+  <div class="fim">{btn_pdf("linha")}</div>
+</div></section>
+{chamada("Leve esse conhecimento para a sua instituição.", "Palestras, mentorias, treinamentos e consultorias para empresas, igrejas e organizações.", "Fale com a equipe", "/contato")}'''
+    return pagina("/curriculo", "Currículo profissional | Karla Messias",
+                  "Experiência de Karla Messias em gestão pública e privada, projetos, captação de recursos, convênios e consultoria a prefeituras e órgãos públicos.",
+                  corpo, preload_foto("foto-22"))
 
 
 def palestras():
@@ -868,7 +928,7 @@ def main():
     global CSS_MIN
     CSS_MIN = minificar(CSS.read_text())
     paginas = {
-        "index.html": home(), "sobre-karla.html": sobre(), "atuacao-profissional.html": atuacao(),
+        "index.html": home(), "sobre-karla.html": sobre(), "curriculo.html": curriculo(), "atuacao-profissional.html": atuacao(),
         "palestras.html": palestras(), "palestras/contratacao.html": contratacao(), "mentorias.html": mentorias(),
         "instituicoes.html": instituicoes(), "instituto-ancora.html": inst_pagina("instituto-ancora"),
         "sisadica.html": inst_pagina("sisadica"), "casa-da-alianca.html": inst_pagina("casa-da-alianca"),
@@ -895,6 +955,7 @@ def main():
 ## Páginas
 - [Início]({DOMINIO}/): apresentação, pilares, atuação, palestras, mentorias, instituições, movimentos, conteúdos, agenda e contato.
 - [Sobre Karla]({DOMINIO}/sobre-karla): biografia oficial e liderança institucional.
+- [Currículo profissional]({DOMINIO}/curriculo): experiência em gestão pública e privada, consultoria a prefeituras, formação e capacitações. PDF em {DOMINIO}{CV_PDF}.
 - [Atuação profissional]({DOMINIO}/atuacao-profissional)
 - [Palestras]({DOMINIO}/palestras) e [contratação]({DOMINIO}/palestras/contratacao)
 - [Mentorias e formações]({DOMINIO}/mentorias)

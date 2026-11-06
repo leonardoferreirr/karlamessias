@@ -5,6 +5,7 @@
 ## Páginas
 - [Início](https://www.karlamessias.com/): apresentação, pilares, atuação, palestras, mentorias, instituições, movimentos, conteúdos, agenda e contato.
 - [Sobre Karla](https://www.karlamessias.com/sobre-karla): biografia oficial e liderança institucional.
+- [Currículo profissional](https://www.karlamessias.com/curriculo): experiência em gestão pública e privada, consultoria a prefeituras, formação e capacitações. PDF em https://www.karlamessias.com/assets/docs/curriculo-karla-messias.pdf.
 - [Atuação profissional](https://www.karlamessias.com/atuacao-profissional)
 - [Palestras](https://www.karlamessias.com/palestras) e [contratação](https://www.karlamessias.com/palestras/contratacao)
 - [Mentorias e formações](https://www.karlamessias.com/mentorias)

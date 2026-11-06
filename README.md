@@ -5,6 +5,7 @@ Instituto Âncora, SISADICA, Casa da Aliança, movimentos, conteúdos, agenda, c
 `/landingpage` e ponte `/obrigado` para o WhatsApp.
 
 ## Como editar
+- Currículo: `_src/curriculo.py` alimenta a página `/curriculo` e o PDF. Mudou o texto: `python3 tools/curriculo_pdf.py` e depois o build.
 - Copy: `_src/conteudo.py` (transcrita do briefing da Karla; o texto original está em `_src/briefing-ocr.txt`).
 - Montagem, cores dos cards e destinos: `build.py`. Estilo: `assets/css/site.css`. Comportamento: `assets/js/site.js`.
 - Eventos e artigos: preencha `EVENTOS` e `POSTS` no `build.py`; as áreas da home e da agenda se montam sozinhas.
@@ -18,7 +19,7 @@ Instituto Âncora, SISADICA, Casa da Aliança, movimentos, conteúdos, agenda, c
 ## Pendências com a cliente
 - Confirmar que o WhatsApp profissional é o +55 61 99397-3723.
 - Fotos originais do fotógrafo (as atuais vieram pelo WhatsApp, 1024 px).
-- Conteúdo das subpáginas que o briefing lista e ainda não tem texto (currículo, certificados, missão e valores do
+- Conteúdo das subpáginas que o briefing lista e ainda não tem texto (certificados, missão e valores do
   Instituto, países do SISADICA, declaração de fé da Casa da Aliança etc.).
 - Versão em inglês: estrutura pronta, tradução depois da aprovação do texto em português.
 - Painel administrativo, e-mail marketing e inscrição em cursos pedem uma segunda fase (CMS/sistema).

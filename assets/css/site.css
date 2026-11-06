@@ -606,3 +606,23 @@ strong,b{font-weight:500}
   .ctas{display:grid;grid-template-columns:minmax(0,max-content);width:fit-content;max-width:100%;margin-inline:auto;}
   .ctas>*{width:100%;justify-content:center;text-align:center}
 }
+
+/* currículo: linha do tempo e listas; a seção escura da /sobre-karla reaproveita .papeis */
+.cv{max-width:60rem;margin-inline:auto;border-top:1px solid var(--linha)}
+.cv__item{display:grid;grid-template-columns:10.5rem 1fr;gap:clamp(1rem,3vw,2.5rem);padding:clamp(1.6rem,3vw,2.2rem) 0;border-bottom:1px solid var(--linha)}
+.cv__data{font-size:.95rem;font-weight:400;color:var(--marsala);line-height:1.6}
+.cv__item h3{color:var(--marsala)}
+.cv__papel{margin-top:.2rem;color:var(--muted)}
+.cv__lista{margin-top:.9rem;padding:0;text-align:left}
+.cv__lista li{list-style:none;position:relative;padding:.2rem 0 .2rem 1.3rem;font-size:.97rem;line-height:1.6}
+.cv__lista li::before{content:"";position:absolute;left:0;top:.72em;width:.4rem;height:.4rem;background:var(--dourado);transform:rotate(45deg)}
+.cv__item .cv__lista li{color:var(--muted)}
+.ancora--plan .cv__lista{margin-top:1.2rem}
+.sec--escuro .papeis,.sec--escuro .papeis li{border-color:var(--linha-clara)}
+.sec--escuro .par__txt>p{color:rgba(246,240,230,.74)}
+.cv__blocos{margin-top:clamp(1.6rem,3vw,2.4rem)}
+.sec--escuro .papeis b{color:var(--dourado-2)}
+.sec--escuro .papeis span{color:rgba(246,240,230,.74)}
+@media (max-width:900px){
+  .cv__item{grid-template-columns:1fr;gap:.3rem}
+}
